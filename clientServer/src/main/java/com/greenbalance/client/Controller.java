@@ -25,9 +25,12 @@ public class Controller {
     }
 
     private void initSnapshotResponse() {
-        URI serviceUri = loadBalancerClient.choose("serverID").getUri();
+        URI serviceUri = loadBalancerClient.choose("serverId").getUri();
         ActionResult forObject = restTemplate.getForObject(serviceUri + "/testPoint", ActionResult.class);
+//или так
+// serverId это spring.application.name или как-то надо получить с клауда эти точки
 
+        forObject = restTemplate.getForObject("serverId/testPoint", ActionResult.class);
     }
 
 }
