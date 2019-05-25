@@ -1,17 +1,33 @@
 package com.greenbalance.client;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.greenpoint.api.ActionResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
 
 /**
  * Created by Komyshenets on 25.05.2019.
  */
-@RestController
+@Service
 public class Controller {
 
-    @RequestMapping("/")
-    public String home() {
-        return "Hello world";
+    @Autowired
+    private final LoadBalancerClient loadBalancerClient;
+    @Autowired
+    private final RestTemplate restTemplate;
+
+    public Controller(LoadBalancerClient loadBalancerClient, RestTemplate restTemplate) {
+        this.loadBalancerClient = loadBalancerClient;
+        this.restTemplate = restTemplate;
+    }
+
+    private void initSnapshotResponse() {
+        URI serviceUri = loadBalancerClient.choose("serverID").getUri();
+        ActionResult forObject = restTemplate.getForObject(serviceUri + "/testPoint", ActionResult.class);
+
     }
 
 }
